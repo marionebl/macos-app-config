@@ -1,0 +1,62 @@
+{
+  "name": "macos-app-config",
+  "version": "1.0.0",
+  "description": "Get the current configuration of a macOS application",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "clean": "npx rimraf lib",
+    "format": "prettier src/**/*.ts --write && tslint --project . --fix",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(.*)\\.test\\.js",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marionebl/macos-app-config.git"
+  },
+  "keywords": [
+    "terminal",
+    "emulator",
+    "detection"
+  ],
+  "author": "Mario Nebl <hello@mario-nebl.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marionebl/macos-app-config/issues"
+  },
+  "homepage": "https://github.com/marionebl/macos-app-config#readme",
+  "devDependencies": {
+    "@types/execa": "^0.8.0",
+    "@types/jest": "^21.1.9",
+    "jest": "^22.0.4",
+    "jest-cli": "^22.0.4",
+    "prettier": "^1.9.2",
+    "ts-jest": "^22.0.0",
+    "tslint": "^5.7.0",
+    "tslint-config-prettier": "^1.6.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "bplist-parser": "^0.1.1",
+    "execa": "^0.8.0"
+  }
+}
