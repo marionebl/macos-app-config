@@ -4,6 +4,7 @@ import * as os from "os";
 import * as path from "path";
 import * as util from "util";
 
+const bundleId = require("@marionebl/bundle-id"); // tslint:disable-line
 const bplistParser = require("bplist-parser"); // tslint:disable-line
 const sander = require("@marionebl/sander"); // tslint:disable-line
 
@@ -21,13 +22,13 @@ async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
     return {};
   }
 
-  const bundleId = await getBundleId(app);
+  const id = await getBundleId(app);
 
-  if (!bundleId) {
+  if (!id) {
     return {};
   }
 
-  const configPath = resolveConfig(bundleId);
+  const configPath = resolveConfig(id);
 
   if (!fs.existsSync(configPath)) {
     return {};
@@ -38,13 +39,13 @@ async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
 
 function sync(input: string): IMacosAppConfig {
   const app = assert(input) ? input : "";
-  const bundleId = getBundleIdSync(app);
+  const id = getBundleIdSync(app);
 
-  if (!bundleId) {
+  if (!id) {
     return {};
   }
 
-  const configPath = resolveConfig(bundleId);
+  const configPath = resolveConfig(id);
 
   if (!fs.existsSync(configPath)) {
     return {};
@@ -71,39 +72,24 @@ async function getBundleId(app: string): Promise<string> {
   if (isBundleId(app)) {
     return app;
   }
-  const { stdout } = await execa("lsappinfo", [
-    "info",
-    "-only",
-    "bundleid",
-    app
-  ]);
-  const id = stdout.split("=")[1];
 
-  if (typeof id !== "string") {
-    return "";
+  try {
+    return await bundleId(app);
+  } catch {
+    return '';
   }
-
-  return id.substr(1, id.length - 2);
 }
 
 function getBundleIdSync(app: string): string {
   if (isBundleId(app)) {
     return app;
   }
-
-  const { stdout } = execa.sync("lsappinfo", [
-    "info",
-    "-only",
-    "bundleid",
-    app
-  ]);
-  const id = stdout.split("=")[1];
-
-  if (typeof id !== "string") {
-    return "";
+  
+  try {
+    return bundleId.sync(app);
+  } catch {
+    return '';
   }
-
-  return id.substr(1, id.length - 2);
 }
 
 function isBundleId(app: string): boolean {

@@ -12,12 +12,6 @@ beforeAll(() => {
   jest.mock("bplist-parser");
 
   bplist.parseBuffer = jest.fn(() => TEST_DATA);
-  execa.sync = jest.fn((_, args) => {
-    if (args.indexOf("Finder") > -1) {
-      return { stdout: '"CFBundleIdentifier"="com.apple.finder"' };
-    }
-    return { stdout: "" };
-  });
 });
 
 afterAll(() => {
@@ -46,59 +40,44 @@ it("throws for null", async () => {
 });
 
 it("works with bundle ids", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = await config("com.apple.finder");
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
 
-  const execa = require("execa"); // tslint:disable-line
-  await config("com.apple.finder");
-  expect(execa).not.toHaveBeenCalledWith(
-    "lsappinfo",
-    jasmine.arrayContaining(["Finder"])
-  );
+  const actual = await config("com.apple.finder");
+  expect(actual).toEqual(expected);
 });
 
-it.skip("works with app names", async () => {
-  await config("Finder");
-  expect(execa).toHaveBeenCalledWith(
-    "lsappinfo",
-    jasmine.arrayContaining(["Finder"])
-  );
+it("works with app names", async () => {
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
+
+  const actual = await config("Finder");
+  expect(actual).toEqual(expected);
 });
 
 it("returns empty object for non-existing app", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = await config("Nonexisting"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
-
   const actual = await config("Nonexisting");
   expect(actual).toEqual({});
 });
 
 it("returns expected config for app name", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = await config("Finder"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
 
   const actual = await config("Finder");
-  expect(actual).toEqual(TEST_DATA);
+  expect(actual).toEqual(expected);
 });
 
 it("returns expected config for app name", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = await config("Finder"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
 
   const actual = await config("com.apple.finder");
-  expect(actual).toEqual(TEST_DATA);
+  expect(actual).toEqual(expected);
 });
 
 it("sync exists", () => {
@@ -114,62 +93,42 @@ it("sync throws for null", () => {
 });
 
 it("sync works with bundle ids", () => {
-  if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync("com.apple.finder");
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
 
-  config("com.apple.finder");
-  expect(execa.sync).not.toHaveBeenCalledWith(
-    "lsappinfo",
-    jasmine.arrayContaining(["Finder"])
-  );
+  const actual = macosAppConfig.sync("com.apple.finder");
+  expect(actual).toEqual(expected);
 });
 
-it.skip("sync works with app names", () => {
-  if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync("Finder");
-    expect(actual).toEqual({});
-    return;
-  }
+it("sync works with app names", () => {
+  const expected = os.platform() === "darwin"  
+    ? TEST_DATA
+    : {};
 
-  config("Finder");
-  expect(execa.sync).toHaveBeenCalledWith(
-    "lsappinfo",
-    jasmine.arrayContaining(["Finder"])
-  );
+  const actual = macosAppConfig.sync("Finder");
+  expect(actual).toEqual(expected);
 });
 
 it("sync returns empty object for non-existing app", () => {
-  if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync("Nonexisting"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
-
   const actual = macosAppConfig.sync("Nonexisting");
   expect(actual).toEqual({});
 });
 
 it("sync returns expected config for app name", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync("Finder"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"
+    ? TEST_DATA
+    : {};
 
   const actual = macosAppConfig.sync("Finder");
-  expect(actual).toEqual(TEST_DATA);
+  expect(actual).toEqual(expected);
 });
 
 it("sync returns expected config for app name", async () => {
-  if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync("com.apple.finder"); // tslint:disable-line
-    expect(actual).toEqual({});
-    return;
-  }
+  const expected = os.platform() === "darwin"
+    ? TEST_DATA
+    : {};
 
   const actual = macosAppConfig.sync("com.apple.finder");
-  expect(actual).toEqual(TEST_DATA);
+  expect(actual).toEqual(expected);
 });
