@@ -16,28 +16,41 @@ export {sync};
 
 async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
   const app = assert(input) ? input : '';
+
+  if (os.platform() !== "darwin") {
+    return {};
+  }
+
   const bundleId = await getBundleId(app);
-  const configPath = path.join(os.homedir(), 'Library', 'Preferences', `${bundleId}.plist`);
+
+  if (!bundleId) {
+    return {};
+  }
+
+  const configPath = resolveConfig(bundleId);
 
   if (!fs.existsSync(configPath)) {
     return {};
   }
 
-  const buffer = await readFile(configPath);
-  return bplistParser.parseBuffer(buffer);
+  return bplistParser.parseBuffer(await readFile(configPath));
 }
 
 function sync(input: string): IMacosAppConfig {
   const app = assert(input) ? input : '';
   const bundleId = getBundleIdSync(app);
-  const configPath = path.join(os.homedir(), 'Library', 'Preferences', `${bundleId}.plist`);
+
+  if (!bundleId) {
+    return {};
+  }
+
+  const configPath = resolveConfig(bundleId);
 
   if (!fs.existsSync(configPath)) {
     return {};
   }
 
-  const buffer = fs.readFileSync(configPath);
-  return bplistParser.parseBuffer(buffer);
+  return bplistParser.parseBuffer(fs.readFileSync(configPath));
 }
 
 function assert(app: any): app is string {
@@ -57,23 +70,34 @@ async function getBundleId(app: string): Promise<string> {
     return app;
   }
   const {stdout} = await execa('lsappinfo', ['info', '-only', 'bundleid', app]);
-  return stdout.split('=')[1].substring(1, -1);
-}
+  const id = stdout.split('=')[1];
 
-async function getBundleSync(app: string): Promise<string> {
-  if (isBundleId(app)) {
-    return app;
+  if (typeof id !== 'string') {
+    return '';
   }
-  const {stdout} = execa.sync('lsappinfo', ['info', '-only', 'bundleid', app]);
-  return stdout.split('=')[1].substring(1, -1);
+
+  return id.substr(1, id.length - 2);
 }
 
 function getBundleIdSync(app: string): string {
   if (isBundleId(app)) {
     return app;
   }
+
+  const {stdout} = execa.sync('lsappinfo', ['info', '-only', 'bundleid', app]);
+  const id = stdout.split('=')[1];
+
+  if (typeof id !== 'string') {
+    return '';
+  }
+
+  return id.substr(1, id.length - 2);
 }
 
 function isBundleId(app: string): boolean {
   return app.split('.').filter(Boolean).length === 3;
+}
+
+function resolveConfig(id: string): string {
+  return path.join(os.homedir(), 'Library', 'Preferences', `${id}.plist`);
 }
