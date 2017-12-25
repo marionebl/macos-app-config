@@ -1,9 +1,9 @@
-const macosAppConfig = require('.');
-const config = require('.').default;
+const macosAppConfig = require('.'); // tslint:disable-line
+const config = require('.').default; // tslint:disable-line
 
-const os = require("os");
-const bplist = require('bplist-parser');
-const execa = require('execa');
+const os = require("os"); // tslint:disable-line
+const bplist = require('bplist-parser'); // tslint:disable-line
+const execa = require('execa'); // tslint:disable-line
 
 const TEST_DATA = {foo: 'bar'};
 
@@ -48,7 +48,7 @@ it("works with bundle ids", async () => {
     return;
   }
 
-  const execa = require('execa');
+  const execa = require('execa');  // tslint:disable-line
   await config('com.apple.finder');
   expect(execa).not.toHaveBeenCalledWith('lsappinfo', jasmine.arrayContaining(['Finder']));
 });
@@ -60,7 +60,7 @@ it.skip("works with app names", async () => {
 
 it("returns empty object for non-existing app", async () => {
   if (os.platform() !== "darwin") {
-    const actual = await config('Nonexisting');
+    const actual = await config('Nonexisting');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }
@@ -71,7 +71,7 @@ it("returns empty object for non-existing app", async () => {
 
 it("returns expected config for app name", async () => {
   if (os.platform() !== "darwin") {
-    const actual = await config('Finder');
+    const actual = await config('Finder');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }
@@ -82,7 +82,7 @@ it("returns expected config for app name", async () => {
 
 it("returns expected config for app name", async () => {
   if (os.platform() !== "darwin") {
-    const actual = await config('Finder');
+    const actual = await config('Finder');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }
@@ -127,7 +127,7 @@ it.skip("sync works with app names", () => {
 
 it("sync returns empty object for non-existing app", () => {
   if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync('Nonexisting');
+    const actual = macosAppConfig.sync('Nonexisting');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }
@@ -138,7 +138,7 @@ it("sync returns empty object for non-existing app", () => {
 
 it("sync returns expected config for app name", async () => {
   if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync('Finder');
+    const actual = macosAppConfig.sync('Finder');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }
@@ -149,7 +149,7 @@ it("sync returns expected config for app name", async () => {
 
 it("sync returns expected config for app name", async () => {
   if (os.platform() !== "darwin") {
-    const actual = macosAppConfig.sync('com.apple.finder');
+    const actual = macosAppConfig.sync('com.apple.finder');  // tslint:disable-line
     expect(actual).toEqual({});
     return;
   }

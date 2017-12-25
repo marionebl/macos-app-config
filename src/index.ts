@@ -5,7 +5,7 @@ import * as path from "path";
 import * as util from "util";
 
 const bplistParser = require("bplist-parser"); // tslint:disable-line
-const readFile = util.promisify(fs.readFile);
+const sander = require('@marionebl/sander');  // tslint:disable-line
 
 export interface IMacosAppConfig {
   [key: string]: any;
@@ -33,7 +33,7 @@ async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
     return {};
   }
 
-  return bplistParser.parseBuffer(await readFile(configPath));
+  return bplistParser.parseBuffer(await sander.readFile(configPath));
 }
 
 function sync(input: string): IMacosAppConfig {

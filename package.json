@@ -18,7 +18,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "testRegex": "(.*)\\.test\\.js",
+    "testRegex": "(.*)\\.test\\.ts",
     "moduleFileExtensions": [
       "ts",
       "js",
@@ -56,6 +56,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
+    "@marionebl/sander": "^0.6.1",
     "bplist-parser": "^0.1.1",
     "execa": "^0.8.0"
   }
