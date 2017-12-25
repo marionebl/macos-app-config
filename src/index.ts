@@ -5,17 +5,17 @@ import * as path from "path";
 import * as util from "util";
 
 const bplistParser = require("bplist-parser"); // tslint:disable-line
-const sander = require('@marionebl/sander');  // tslint:disable-line
+const sander = require("@marionebl/sander"); // tslint:disable-line
 
 export interface IMacosAppConfig {
   [key: string]: any;
 }
 
 export default macosAppConfig;
-export {sync}; 
+export { sync };
 
 async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
-  const app = assert(input) ? input : '';
+  const app = assert(input) ? input : "";
 
   if (os.platform() !== "darwin") {
     return {};
@@ -37,7 +37,7 @@ async function macosAppConfig(input: string): Promise<IMacosAppConfig> {
 }
 
 function sync(input: string): IMacosAppConfig {
-  const app = assert(input) ? input : '';
+  const app = assert(input) ? input : "";
   const bundleId = getBundleIdSync(app);
 
   if (!bundleId) {
@@ -54,12 +54,14 @@ function sync(input: string): IMacosAppConfig {
 }
 
 function assert(app: any): app is string {
-  if (typeof app === 'undefined') {
-    throw new TypeError('macos-app-config: missing required parameter app');
+  if (typeof app === "undefined") {
+    throw new TypeError("macos-app-config: missing required parameter app");
   }
 
-  if (typeof app !== 'string') {
-    throw new TypeError(`macos-app-config: app must be of type string, received "${app}" of type "${typeof app}"`);
+  if (typeof app !== "string") {
+    throw new TypeError(
+      `macos-app-config: app must be of type string, received "${app}" of type "${typeof app}"`
+    );
   }
 
   return true;
@@ -69,11 +71,16 @@ async function getBundleId(app: string): Promise<string> {
   if (isBundleId(app)) {
     return app;
   }
-  const {stdout} = await execa('lsappinfo', ['info', '-only', 'bundleid', app]);
-  const id = stdout.split('=')[1];
+  const { stdout } = await execa("lsappinfo", [
+    "info",
+    "-only",
+    "bundleid",
+    app
+  ]);
+  const id = stdout.split("=")[1];
 
-  if (typeof id !== 'string') {
-    return '';
+  if (typeof id !== "string") {
+    return "";
   }
 
   return id.substr(1, id.length - 2);
@@ -84,20 +91,25 @@ function getBundleIdSync(app: string): string {
     return app;
   }
 
-  const {stdout} = execa.sync('lsappinfo', ['info', '-only', 'bundleid', app]);
-  const id = stdout.split('=')[1];
+  const { stdout } = execa.sync("lsappinfo", [
+    "info",
+    "-only",
+    "bundleid",
+    app
+  ]);
+  const id = stdout.split("=")[1];
 
-  if (typeof id !== 'string') {
-    return '';
+  if (typeof id !== "string") {
+    return "";
   }
 
   return id.substr(1, id.length - 2);
 }
 
 function isBundleId(app: string): boolean {
-  return app.split('.').filter(Boolean).length === 3;
+  return app.split(".").filter(Boolean).length === 3;
 }
 
 function resolveConfig(id: string): string {
-  return path.join(os.homedir(), 'Library', 'Preferences', `${id}.plist`);
+  return path.join(os.homedir(), "Library", "Preferences", `${id}.plist`);
 }
